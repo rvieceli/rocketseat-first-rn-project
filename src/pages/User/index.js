@@ -34,6 +34,7 @@ export default class User extends Component {
     stars: [],
     page: 1,
     loading: false,
+    refreshing: false,
   };
 
   async componentDidMount() {
@@ -44,6 +45,7 @@ export default class User extends Component {
     const { stars, page, loading } = this.state;
 
     if (loading) return;
+    if (!page) return;
 
     this.setState({ loading: true });
 
@@ -59,9 +61,21 @@ export default class User extends Component {
 
     this.setState({
       stars: [...stars, ...response.data],
-      page: page + 1,
+      page: response.data.length < 10 ? null : page + 1,
       loading: false,
     });
+  };
+
+  refreshList = async () => {
+    await this.setState({
+      stars: [],
+      page: 1,
+      refreshing: true,
+    });
+
+    await this.loadMore();
+
+    this.setState({ refreshing: false });
   };
 
   handleShow = (repoName, htmlUrl) => {
@@ -71,15 +85,16 @@ export default class User extends Component {
   };
 
   renderFooter = () => {
-    const { loading } = this.state;
+    const { loading, refreshing } = this.state;
 
-    if (!loading) return null;
+    if (!loading || refreshing) return null;
+
     return <LoadingIndicator />;
   };
 
   render() {
     const { navigation } = this.props;
-    const { stars } = this.state;
+    const { stars, refreshing } = this.state;
     const user = navigation.getParam('user');
 
     return (
@@ -107,6 +122,8 @@ export default class User extends Component {
           onEndReached={this.loadMore}
           onEndReachedThreshold={0.1}
           ListFooterComponent={this.renderFooter}
+          onRefresh={this.refreshList}
+          refreshing={refreshing}
         />
       </Container>
     );

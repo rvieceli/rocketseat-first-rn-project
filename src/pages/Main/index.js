@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Keyboard, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Swipeable from 'react-native-swipeable';
+
 import api from '../../services/api';
 
 import {
@@ -11,12 +13,14 @@ import {
   Input,
   SubmitButton,
   List,
+  UserContainer,
   User,
   Avatar,
   Name,
   Bio,
   ProfileButton,
   ProfileButtonText,
+  DeleteButton,
 } from './styles';
 
 export default class Main extends Component {
@@ -75,6 +79,14 @@ export default class Main extends Component {
     Keyboard.dismiss();
   };
 
+  handleDeleteUser = async login => {
+    const { users } = this.state;
+
+    await this.setState({
+      users: users.filter(user => user.login !== login),
+    });
+  };
+
   handleNavigate = user => {
     const { navigation } = this.props;
 
@@ -100,7 +112,7 @@ export default class Main extends Component {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Icon name="add" size={20} color="#fff" />
+              <Icon name="add" size={40} color="#fff" />
             )}
           </SubmitButton>
         </Form>
@@ -109,14 +121,27 @@ export default class Main extends Component {
           data={users}
           keyExtractor={user => user.login}
           renderItem={({ item }) => (
-            <User>
-              <Avatar source={{ uri: item.avatar }} />
-              <Name>{item.name}</Name>
-              <Bio>{item.bio}</Bio>
-              <ProfileButton onPress={() => this.handleNavigate(item)}>
-                <ProfileButtonText>Ver Perfil</ProfileButtonText>
-              </ProfileButton>
-            </User>
+            <UserContainer>
+              <Swipeable
+                rightButtons={[
+                  <DeleteButton
+                    onPress={() => this.handleDeleteUser(item.login)}
+                  >
+                    <Icon name="delete" size={20} color="#fff" />
+                  </DeleteButton>,
+                ]}
+                rightButtonWidth={75}
+              >
+                <User>
+                  <Avatar source={{ uri: item.avatar }} />
+                  <Name>{item.name}</Name>
+                  <Bio>{item.bio}</Bio>
+                  <ProfileButton onPress={() => this.handleNavigate(item)}>
+                    <ProfileButtonText>Ver Perfil</ProfileButtonText>
+                  </ProfileButton>
+                </User>
+              </Swipeable>
+            </UserContainer>
           )}
         />
       </Container>

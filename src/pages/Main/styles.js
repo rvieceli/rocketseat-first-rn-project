@@ -40,9 +40,12 @@ export const List = styled.FlatList.attrs({
   margin-top: 20px;
 `;
 
+export const UserContainer = styled.View`
+  margin-bottom: 30px;
+`;
+
 export const User = styled.View`
   align-items: center;
-  margin: 0 20px 30px;
 `;
 
 export const Avatar = styled.Image`
@@ -84,4 +87,13 @@ export const ProfileButtonText = styled.Text`
   font-weight: bold;
   color: #fff;
   text-transform: uppercase;
+`;
+
+export const DeleteButton = styled.TouchableOpacity`
+  width: 75px;
+  background: #f00;
+  margin-bottom: 30px;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 `;

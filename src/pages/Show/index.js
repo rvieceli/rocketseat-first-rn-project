@@ -30,6 +30,7 @@ export default class Show extends Component {
     return (
       <WebView
         source={{ uri: htmlUrl }}
+        style={{ flex: 1 }}
         renderLoading={this.loading}
         startInLoadingState
       />
